@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Panchang Match</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f7f3eb;
+      color: #24170f;
+    }
+
+    .container {
+      width: min(900px, 92%);
+      margin: 0 auto;
+      padding: 40px 0;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 42px;
+    }
+
+    .header p {
+      color: #765f50;
+      margin-top: 10px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d8cec4;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #8b4513;
+      color: white;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 15px;
+      color: #765f50;
+    }
+
+    .results {
+      display: none;
+    }
+
+    .vara {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+
+    .panchang-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .item {
+      border: 1px solid #eadfd5;
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .item .label {
+      font-size: 14px;
+      color: #8a7566;
+      margin-bottom: 7px;
+    }
+
+    .item .value {
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .details {
+      margin-top: 25px;
+      color: #765f50;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .error {
+      color: #b3261e;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 650px) {
+      .form-grid,
+      .panchang-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <header class="header">
+      <h1>🕉️ Panchang Match</h1>
+      <p>Calculate Panchang elements for any date and time</p>
+    </header>
+
+    <section class="card">
+
+      <div class="form-grid">
+
+        <div>
+          <label for="date">Date</label>
+
+          <input
+            id="date"
+            type="date"
+            value="2007-08-09"
+          >
+        </div>
+
+        <div>
+          <label for="time">Time</label>
+
+          <input
+            id="time"
+            type="time"
+            value="14:30"
+          >
+        </div>
+
+      </div>
+
+      <button id="calculate">
+        Calculate Panchang
+      </button>
+
+      <div id="status" class="status"></div>
+
+      <div id="error" class="error"></div>
+
+    </section>
+
+
+    <section id="results" class="card results">
+
+      <div
+        id="vara"
+        class="vara"
+      ></div>
+
+      <div class="panchang-grid">
+
+        <div class="item">
+          <div class="label">
+            Tithi
+          </div>
+
+          <div
+            id="tithi"
+            class="value"
+          ></div>
+        </div>
+
+
+        <div class="item">
+          <div class="label">
+            Nakshatra
+          </div>
+
+          <div
+            id="nakshatra"
+            class="value"
+          ></div>
+        </div>
+
+
+        <div class="item">
+          <div class="label">
+            Yoga
+          </div>
+
+          <div
+            id="yoga"
+            class="value"
+          ></div>
+        </div>
+
+
+        <div class="item">
+          <div class="label">
+            Karana
+          </div>
+
+          <div
+            id="karana"
+            class="value"
+          ></div>
+        </div>
+
+      </div>
+
+
+      <div class="details">
+
+        <div>
+          <strong>Sun:</strong>
+          <span id="sun"></span>°
+        </div>
+
+        <div>
+          <strong>Moon:</strong>
+          <span id="moon"></span>°
+        </div>
+
+        <div>
+          <strong>Ayanamsa:</strong>
+          <span id="ayanamsa"></span>
+        </div>
+
+        <div>
+          <strong>Timezone:</strong>
+          Asia/Kolkata
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    const calculateButton =
+      document.getElementById('calculate');
+
+    const status =
+      document.getElementById('status');
+
+    const error =
+      document.getElementById('error');
+
+    const results =
+      document.getElementById('results');
+
+
+    calculateButton.addEventListener(
+      'click',
+      async () => {
+
+        const date =
+          document.getElementById('date').value;
+
+        const time =
+          document.getElementById('time').value;
+
+
+        if (!date) {
+          error.textContent =
+            'Please select a date.';
+
+          return;
+        }
+
+
+        status.textContent =
+          'Calculating...';
+
+        error.textContent = '';
+
+        results.style.display =
+          'none';
+
+
+        try {
+
+          const response =
+            await fetch(
+              `/api/panchang?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`
+            );
+
+
+          const data =
+            await response.json();
+
+
+          if (!response.ok || !data.ok) {
+            throw new Error(
+              data.error ||
+              'Unable to calculate Panchang'
+            );
+          }
+
+
+          const p =
+            data.panchang;
+
+
+          document.getElementById(
+            'vara'
+          ).textContent =
+            p.vara.name;
+
+
+          document.getElementById(
+            'tithi'
+          ).textContent =
+            p.tithi.name;
+
+
+          document.getElementById(
+            'nakshatra'
+          ).textContent =
+            p.nakshatra.name;
+
+
+          document.getElementById(
+            'yoga'
+          ).textContent =
+            p.yoga.name;
+
+
+          document.getElementById(
+            'karana'
+          ).textContent =
+            p.karana.name;
+
+
+          document.getElementById(
+            'sun'
+          ).textContent =
+            p.sun.longitude;
+
+
+          document.getElementById(
+            'moon'
+          ).textContent =
+            p.moon.longitude;
+
+
+          document.getElementById(
+            'ayanamsa'
+          ).textContent =
+            p.ayanamsa;
+
+
+          results.style.display =
+            'block';
+
+          status.textContent = '';
+
+        } catch (err) {
+
+          status.textContent = '';
+
+          error.textContent =
+            err.message;
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
