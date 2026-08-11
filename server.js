@@ -58,8 +58,8 @@ app.get('/api/panchang', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(
-    `Panchang Match server listening on http://localhost:${PORT}`
+    `Panchang Match server listening on port ${PORT}`
   );
 });
