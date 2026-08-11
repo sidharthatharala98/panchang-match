@@ -10,146 +10,545 @@
 
   <title>Panchang Match</title>
 
+  <meta
+    name="description"
+    content="Calculate Panchang elements for any date and time."
+  >
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=EB+Garamond:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
   <style>
+    :root {
+      --cream: #f8f0df;
+      --paper: #fffaf0;
+      --brown-dark: #3b1d0b;
+      --brown: #6b3210;
+      --gold: #b77a24;
+      --gold-light: #d8a85d;
+    }
+
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      rgba(248, 240, 223, 0.78),
+      rgba(248, 240, 223, 0.78)
+    ),
+    url("/temple-bg.png") center top / cover fixed no-repeat;
+
+  color: var(--brown-dark);
+  font-family: "EB Garamond", Georgia, serif;
+  overflow-x: hidden;
+}
+
+    .page-border {
+      position: fixed;
+      inset: 12px;
+      border: 1px solid rgba(174,116,37,.55);
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .page-border::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(174,116,37,.2);
+    }
+
+    .page {
+      width: min(1100px, 92%);
+      margin: auto;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: #f7f3eb;
-      color: #24170f;
+      padding: 35px 20px 60px;
     }
 
-    .container {
-      width: min(900px, 92%);
-      margin: 0 auto;
-      padding: 40px 0;
+    /* OM */
+
+    .om-wrapper {
+      width: 145px;
+      height: 145px;
+      margin: 0 auto 8px;
     }
 
-    .header {
+    .om-logo {
+      width: 100%;
+      height: 100%;
+    }
+
+    .mandala-circle {
+      fill: rgba(255,250,239,.7);
+      stroke: var(--gold);
+      stroke-width: 2;
+    }
+
+    .inner-circle {
+      fill: none;
+      stroke: var(--gold-light);
+      stroke-width: 1.5;
+    }
+
+    .petals {
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 2;
+    }
+
+    .om-symbol {
+      font-family: "Noto Sans Devanagari", serif;
+      font-size: 75px;
+      fill: var(--brown);
+    }
+
+    /* HEADER */
+
+    .hero {
       text-align: center;
-      margin-bottom: 35px;
+      margin-bottom: 38px;
     }
 
-    .header h1 {
-      margin: 0;
-      font-size: 42px;
+    .hero h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(55px, 7vw, 85px);
+      line-height: .9;
+      font-weight: 600;
+      color: var(--brown-dark);
     }
 
-    .header p {
-      color: #765f50;
-      margin-top: 10px;
+    .sanskrit {
+      margin-top: 20px;
+      color: var(--gold);
+      font-family: "Noto Sans Devanagari", serif;
+      font-size: 19px;
+      letter-spacing: 2px;
     }
 
-    .card {
-      background: white;
-      border-radius: 18px;
-      padding: 28px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-      margin-bottom: 24px;
+    .subtitle {
+      margin-top: 8px;
+      font-size: 22px;
+      color: #694529;
     }
 
-    .form-grid {
+    /* CARD */
+
+    .calculator-card {
+      width: min(900px, 100%);
+      margin: auto;
+      padding: 35px 50px 30px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,251,241,.98),
+          rgba(249,240,220,.98)
+        );
+
+      border: 1.5px solid var(--gold);
+      border-radius: 24px;
+
+      box-shadow:
+        0 18px 45px rgba(72,39,13,.15);
+
+      position: relative;
+    }
+
+    .calculator-card::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(183,122,36,.3);
+      border-radius: 17px;
+      pointer-events: none;
+    }
+
+    .decoration {
+      text-align: center;
+      color: var(--gold);
+      font-size: 25px;
+      margin-bottom: 25px;
+    }
+
+    /* INPUTS */
+
+    .input-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 18px;
+      gap: 45px;
     }
 
     label {
       display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 9px;
+
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 24px;
+      font-weight: 700;
     }
 
     input {
       width: 100%;
-      padding: 13px;
-      border: 1px solid #d8cec4;
-      border-radius: 10px;
-      font-size: 16px;
+      height: 60px;
+
+      padding: 0 18px;
+
+      border-radius: 12px;
+      border: 1.5px solid #d2aa72;
+
+      background: #fffdf7;
+
+      color: var(--brown-dark);
+
+      font-family: "EB Garamond", Georgia, serif;
+      font-size: 20px;
+
+      outline: none;
     }
 
-    button {
+    input:focus {
+      border-color: var(--gold);
+
+      box-shadow:
+        0 0 0 4px rgba(183,122,36,.12);
+    }
+
+    /* BUTTON */
+
+    #calculateBtn {
       width: 100%;
-      margin-top: 22px;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      background: #8b4513;
-      color: white;
-      font-size: 17px;
+      height: 68px;
+
+      margin-top: 35px;
+
+      border: 2px solid #8a470e;
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          180deg,
+          #a85816,
+          #713108
+        );
+
+      color: #fff6e5;
+
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 27px;
       font-weight: 700;
+
       cursor: pointer;
+
+      box-shadow:
+        0 6px 0 #542507,
+        0 13px 25px rgba(91,42,8,.25);
+
+      transition: .15s;
     }
 
-    button:hover {
-      opacity: 0.9;
+    #calculateBtn:hover {
+      transform: translateY(-2px);
     }
 
-    .status {
+    #calculateBtn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #542507;
+    }
+
+    /* RESULTS */
+
+    #resultSection {
+      width: min(900px, 100%);
+      margin: 45px auto 0;
+
+      padding: 35px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #fffaf0,
+          #f5e9d0
+        );
+
+      border: 1.5px solid var(--gold);
+      border-radius: 22px;
+
+      box-shadow:
+        0 18px 45px rgba(72,39,13,.15);
+    }
+
+    .result-header {
       text-align: center;
-      margin-top: 15px;
-      color: #765f50;
+      margin-bottom: 28px;
     }
 
-    .results {
-      display: none;
+    .result-om {
+      font-family: "Noto Sans Devanagari", serif;
+      font-size: 50px;
+      color: var(--brown);
     }
 
-    .vara {
-      text-align: center;
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 25px;
+    .result-header h2 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 48px;
+    }
+
+    .result-header p {
+      font-size: 19px;
+      color: #79563b;
     }
 
     .panchang-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
+      grid-template-columns: 1fr 1fr;
 
-    .item {
-      border: 1px solid #eadfd5;
+      border: 1px solid #d5b27b;
       border-radius: 14px;
-      padding: 20px;
+      overflow: hidden;
     }
 
-    .item .label {
-      font-size: 14px;
-      color: #8a7566;
-      margin-bottom: 7px;
+    .panchang-item {
+      padding: 24px;
+      text-align: center;
+
+      background: rgba(255,250,239,.7);
+
+      border-bottom: 1px solid #dfc49b;
     }
 
-    .item .value {
-      font-size: 21px;
+    .panchang-item:nth-child(odd) {
+      border-right: 1px solid #dfc49b;
+    }
+
+    .vara {
+      grid-column: 1 / -1;
+      border-right: none !important;
+      border-bottom: none;
+    }
+
+    .item-title {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--gold);
+    }
+
+    .item-value {
+      margin-top: 7px;
+
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 28px;
       font-weight: 700;
     }
 
-    .details {
-      margin-top: 25px;
-      color: #765f50;
-      font-size: 14px;
-      line-height: 1.8;
-    }
+    /* FOOTER */
 
-    .error {
-      color: #b3261e;
+    .bottom-text {
       text-align: center;
-      margin-top: 15px;
+      margin-top: 45px;
+
+      font-family: "Noto Sans Devanagari", serif;
+      color: var(--gold);
+      font-size: 18px;
+      letter-spacing: 2px;
     }
 
-    @media (max-width: 650px) {
-      .form-grid,
+    .credit {
+      position: fixed;
+      right: 28px;
+      bottom: 18px;
+
+      text-align: right;
+      color: #6c4a2f;
+    }
+
+    .credit small {
+      display: block;
+      font-style: italic;
+    }
+
+    .credit strong {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 21px;
+      font-style: italic;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+/* MATCH RESULTS */
+
+#matchSection {
+  width: min(900px, 100%);
+  margin: 30px auto 0;
+  padding: 35px;
+  background: linear-gradient(
+    135deg,
+    #fffaf0,
+    #f5e9d0
+  );
+  border: 1.5px solid var(--gold);
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(72,39,13,.15);
+}
+
+.match-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.match-header h2 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 42px;
+}
+
+.match-header p {
+  color: #79563b;
+  font-size: 18px;
+}
+
+.match-list {
+  display: grid;
+  gap: 14px;
+}
+
+.match-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 24px;
+  background: rgba(255,250,239,.8);
+  border: 1px solid #d5b27b;
+  border-radius: 14px;
+  transition: .2s ease;
+}
+
+.match-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(72,39,13,.12);
+}
+
+.match-date {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.match-time {
+  margin-top: 3px;
+  color: #79563b;
+  font-size: 17px;
+}
+
+.match-score {
+  min-width: 75px;
+  padding: 8px 12px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  text-align: center;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 23px;
+  font-weight: 700;
+  color: var(--brown);
+  background: #fff7e7;
+}
+
+.no-matches {
+  text-align: center;
+  padding: 25px;
+  color: #79563b;
+  font-size: 19px;
+}
+
+@media (max-width: 700px) {
+  #matchSection {
+    padding: 20px 12px;
+  }
+
+  .match-card {
+    padding: 16px;
+  }
+
+  .match-date {
+    font-size: 21px;
+  }
+
+  .match-time {
+    font-size: 15px;
+  }
+}
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+
+      .page {
+        width: 94%;
+        padding-top: 25px;
+      }
+
+      .om-wrapper {
+        width: 115px;
+        height: 115px;
+      }
+
+      .hero h1 {
+        font-size: 48px;
+      }
+
+      .sanskrit {
+        font-size: 15px;
+      }
+
+      .subtitle {
+        font-size: 18px;
+      }
+
+      .calculator-card {
+        padding: 28px 20px;
+      }
+
+      .input-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      #calculateBtn {
+        font-size: 23px;
+      }
+
+      #resultSection {
+        padding: 20px 12px;
+      }
+
       .panchang-grid {
         grid-template-columns: 1fr;
       }
 
-      .header h1 {
-        font-size: 32px;
+      .panchang-item {
+        border-right: none !important;
+      }
+
+      .vara {
+        grid-column: auto;
+      }
+
+      .credit {
+        position: static;
+        text-align: center;
+        margin-top: 30px;
       }
     }
   </style>
@@ -157,271 +556,555 @@
 
 <body>
 
-  <main class="container">
+  <div class="page-border"></div>
 
-    <header class="header">
-      <h1>🕉️ Panchang Match</h1>
-      <p>Calculate Panchang elements for any date and time</p>
+  <main class="page">
+
+    <header class="hero">
+
+      <div class="om-wrapper">
+
+        <svg
+          class="om-logo"
+          viewBox="0 0 180 180"
+        >
+
+          <circle
+            cx="90"
+            cy="90"
+            r="68"
+            class="mandala-circle"
+          />
+
+          <circle
+            cx="90"
+            cy="90"
+            r="58"
+            class="inner-circle"
+          />
+
+          <g class="petals">
+
+            <path d="M90 8 C82 22 82 30 90 38 C98 30 98 22 90 8Z"/>
+            <path d="M90 172 C82 158 82 150 90 142 C98 150 98 158 90 172Z"/>
+
+            <path d="M8 90 C22 82 30 82 38 90 C30 98 22 98 8 90Z"/>
+            <path d="M172 90 C158 82 150 82 142 90 C150 98 158 98 172 90Z"/>
+
+            <path d="M32 32 C48 34 54 40 54 50 C44 50 36 44 32 32Z"/>
+            <path d="M148 148 C132 146 126 140 126 130 C136 130 144 136 148 148Z"/>
+
+            <path d="M148 32 C132 34 126 40 126 50 C136 50 144 44 148 32Z"/>
+            <path d="M32 148 C48 146 54 140 54 130 C44 130 36 136 32 148Z"/>
+
+          </g>
+
+          <text
+            x="90"
+            y="120"
+            text-anchor="middle"
+            class="om-symbol"
+          >ॐ</text>
+
+        </svg>
+
+      </div>
+
+      <h1>Panchang Match</h1>
+
+      <div class="sanskrit">
+        ❖ ॥ सर्वे भवन्तु सुखिनः ॥ ❖
+      </div>
+
+      <p class="subtitle">
+        Calculate Panchang elements for any date and time
+      </p>
+
     </header>
 
-    <section class="card">
 
-      <div class="form-grid">
+    <section class="calculator-card">
+
+      <div class="decoration">
+        ───── ✧ ─────
+      </div>
+
+      <div class="input-grid">
 
         <div>
-          <label for="date">Date</label>
+
+          <label for="date">
+            ❖ Date ❖
+          </label>
 
           <input
-            id="date"
             type="date"
+            id="date"
             value="2007-08-09"
           >
+
         </div>
 
+
         <div>
-          <label for="time">Time</label>
+
+          <label for="time">
+            ❖ Time ❖
+          </label>
 
           <input
-            id="time"
             type="time"
+            id="time"
             value="14:30"
           >
+
         </div>
 
       </div>
 
-      <button id="calculate">
-        Calculate Panchang
+
+      <button
+        id="calculateBtn"
+        type="button"
+      >
+        ❖ &nbsp; Calculate Panchang &nbsp; ❖
       </button>
 
-      <div id="status" class="status"></div>
 
-      <div id="error" class="error"></div>
+      <div class="decoration" style="margin-top:25px;margin-bottom:0;">
+        ───── ✧ ─────
+      </div>
 
     </section>
 
 
-    <section id="results" class="card results">
+    <section
+      id="resultSection"
+      class="hidden"
+    >
 
-      <div
-        id="vara"
-        class="vara"
-      ></div>
+      <div class="result-header">
+
+        <div class="result-om">
+          ॐ
+        </div>
+
+        <h2>Panchang</h2>
+
+        <p id="resultDate"></p>
+
+      </div>
+
 
       <div class="panchang-grid">
 
-        <div class="item">
-          <div class="label">
-            Tithi
+        <div class="panchang-item">
+
+          <div class="item-title">
+            TITHI
           </div>
 
           <div
             id="tithi"
-            class="value"
-          ></div>
+            class="item-value"
+          >
+            —
+          </div>
+
         </div>
 
 
-        <div class="item">
-          <div class="label">
-            Nakshatra
+        <div class="panchang-item">
+
+          <div class="item-title">
+            NAKSHATRA
           </div>
 
           <div
             id="nakshatra"
-            class="value"
-          ></div>
+            class="item-value"
+          >
+            —
+          </div>
+
         </div>
 
 
-        <div class="item">
-          <div class="label">
-            Yoga
+        <div class="panchang-item">
+
+          <div class="item-title">
+            YOGA
           </div>
 
           <div
             id="yoga"
-            class="value"
-          ></div>
+            class="item-value"
+          >
+            —
+          </div>
+
         </div>
 
 
-        <div class="item">
-          <div class="label">
-            Karana
+        <div class="panchang-item">
+
+          <div class="item-title">
+            KARANA
           </div>
 
           <div
             id="karana"
-            class="value"
-          ></div>
+            class="item-value"
+          >
+            —
+          </div>
+
         </div>
 
-      </div>
 
+        <div class="panchang-item vara">
 
-      <div class="details">
+          <div class="item-title">
+            VARA
+          </div>
 
-        <div>
-          <strong>Sun:</strong>
-          <span id="sun"></span>°
-        </div>
+          <div
+            id="vara"
+            class="item-value"
+          >
+            —
+          </div>
 
-        <div>
-          <strong>Moon:</strong>
-          <span id="moon"></span>°
-        </div>
-
-        <div>
-          <strong>Ayanamsa:</strong>
-          <span id="ayanamsa"></span>
-        </div>
-
-        <div>
-          <strong>Timezone:</strong>
-          Asia/Kolkata
         </div>
 
       </div>
 
     </section>
 
+    <section id="matchesSection" class="hidden">
+
+      <div class="result-header">
+
+        <div class="result-om">
+          ॐ
+        </div>
+
+        <h2>Yearly Matches</h2>
+
+        <p>
+          Dates with the closest Panchang combination
+        </p>
+
+      </div>
+
+      <div id="matchesContainer"></div>
+
+    </section>
+    <div class="bottom-text">
+      ॥ कालो हि दुरतिक्रमः ॥
+    </div>
+
+
+    <footer class="credit">
+
+      <small>
+        Designed by
+      </small>
+
+      <strong>
+        Sidhartha Tharala
+      </strong>
+
+    </footer>
+
   </main>
 
+<script>
 
-  <script>
+const calculateBtn =
+  document.getElementById("calculateBtn");
 
-    const calculateButton =
-      document.getElementById('calculate');
+const resultSection =
+  document.getElementById("resultSection");
 
-    const status =
-      document.getElementById('status');
+const matchesSection =
+  document.getElementById("matchesSection");
 
-    const error =
-      document.getElementById('error');
+const matchesContainer =
+  document.getElementById("matchesContainer");
 
-    const results =
-      document.getElementById('results');
+const dateInput =
+  document.getElementById("date");
 
-
-    calculateButton.addEventListener(
-      'click',
-      async () => {
-
-        const date =
-          document.getElementById('date').value;
-
-        const time =
-          document.getElementById('time').value;
+const timeInput =
+  document.getElementById("time");
 
 
-        if (!date) {
-          error.textContent =
-            'Please select a date.';
+calculateBtn.addEventListener("click", async () => {
 
-          return;
-        }
+  const date = dateInput.value;
+  const time = timeInput.value;
+
+  if (!date || !time) {
+    alert("Please select both date and time.");
+    return;
+  }
+
+  calculateBtn.textContent = "❖  Calculating...  ❖";
+  calculateBtn.disabled = true;
+
+  try {
+
+    /*
+     * 1. Get Panchang
+     */
+
+    const panchangResponse =
+      await fetch(
+        `/api/panchang?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`
+      );
+
+    if (!panchangResponse.ok) {
+      throw new Error("Panchang API failed");
+    }
+
+    const panchangData =
+      await panchangResponse.json();
+
+    const panchang =
+      panchangData.panchang;
 
 
-        status.textContent =
-          'Calculating...';
+    /*
+     * 2. Display Panchang
+     */
 
-        error.textContent = '';
+    document.getElementById("resultDate")
+      .textContent =
+      `${date.split("-").reverse().join("-")} • ${time}`;
 
-        results.style.display =
-          'none';
+    document.getElementById("tithi")
+      .textContent =
+      panchang.tithi?.name || "—";
+
+    document.getElementById("nakshatra")
+      .textContent =
+      panchang.nakshatra?.name || "—";
+
+    document.getElementById("yoga")
+      .textContent =
+      panchang.yoga?.name || "—";
+
+    document.getElementById("karana")
+      .textContent =
+      panchang.karana?.name || "—";
+
+    document.getElementById("vara")
+      .textContent =
+      panchang.vara?.name || "—";
 
 
-        try {
-
-          const response =
-            await fetch(
-              `/api/panchang?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`
-            );
+    resultSection.classList.remove("hidden");
 
 
-          const data =
-            await response.json();
+    /*
+     * 3. Get yearly matches
+     */
+
+    matchesContainer.innerHTML =
+      `<p style="text-align:center;font-size:20px;">
+        Searching the year...
+      </p>`;
+
+    matchesSection.classList.remove("hidden");
 
 
-          if (!response.ok || !data.ok) {
-            throw new Error(
-              data.error ||
-              'Unable to calculate Panchang'
-            );
+    const matchesResponse =
+      await fetch(
+        `/api/matches?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`
+      );
+
+    if (!matchesResponse.ok) {
+      throw new Error("Matches API failed");
+    }
+
+    const matchesData =
+      await matchesResponse.json();
+
+    const matches =
+      matchesData.matches || [];
+
+
+    /*
+     * 4. Display matches
+     */
+
+    if (matches.length === 0) {
+
+      matchesContainer.innerHTML = `
+        <p style="
+          text-align:center;
+          font-size:20px;
+          padding:25px;
+        ">
+          No matching dates found.
+        </p>
+      `;
+
+    } else {
+
+      matchesContainer.innerHTML =
+        matches.map(match => {
+
+          const score = match.score;
+
+          let matchLabel;
+
+          if (score === 5) {
+            matchLabel = "Perfect Match";
+          } else if (score === 4) {
+            matchLabel = "Excellent Match";
+          } else if (score === 3) {
+            matchLabel = "Strong Match";
+          } else {
+            matchLabel = "Partial Match";
           }
 
+          return `
+            <div style="
+              border:1px solid #d5b27b;
+              border-radius:16px;
+              padding:22px;
+              margin-bottom:16px;
+              background:rgba(255,250,239,.8);
+              box-shadow:0 8px 20px rgba(72,39,13,.08);
+            ">
 
-          const p =
-            data.panchang;
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+                flex-wrap:wrap;
+              ">
 
+                <div>
 
-          document.getElementById(
-            'vara'
-          ).textContent =
-            p.vara.name;
+                  <div style="
+                    font-family:'Cormorant Garamond',serif;
+                    font-size:27px;
+                    font-weight:700;
+                  ">
+                    ${match.date}
+                  </div>
 
+                  <div style="
+                    font-size:19px;
+                    color:#79563b;
+                    margin-top:4px;
+                  ">
+                    ${match.time}
+                  </div>
 
-          document.getElementById(
-            'tithi'
-          ).textContent =
-            p.tithi.name;
-
-
-          document.getElementById(
-            'nakshatra'
-          ).textContent =
-            p.nakshatra.name;
-
-
-          document.getElementById(
-            'yoga'
-          ).textContent =
-            p.yoga.name;
-
-
-          document.getElementById(
-            'karana'
-          ).textContent =
-            p.karana.name;
-
-
-          document.getElementById(
-            'sun'
-          ).textContent =
-            p.sun.longitude;
+                </div>
 
 
-          document.getElementById(
-            'moon'
-          ).textContent =
-            p.moon.longitude;
+                <div style="
+                  text-align:center;
+                  min-width:95px;
+                  padding:10px 15px;
+                  border:1px solid #b77a24;
+                  border-radius:12px;
+                  background:#fffaf0;
+                ">
+
+                  <div style="
+                    font-family:'Cormorant Garamond',serif;
+                    font-size:25px;
+                    font-weight:700;
+                    color:#6b3210;
+                  ">
+                    ${score}/5
+                  </div>
+
+                  <div style="
+                    font-size:14px;
+                    color:#8a623f;
+                  ">
+                    ${matchLabel}
+                  </div>
+
+                </div>
+
+              </div>
 
 
-          document.getElementById(
-            'ayanamsa'
-          ).textContent =
-            p.ayanamsa;
+              <div style="
+                display:flex;
+                justify-content:center;
+                gap:8px;
+                flex-wrap:wrap;
+                margin-top:18px;
+              ">
+
+                ${Object.entries(match.matches)
+                  .map(([name, matched]) => `
+                    <span style="
+                      padding:5px 10px;
+                      border-radius:20px;
+                      font-size:14px;
+                      border:1px solid ${matched ? "#b77a24" : "#c9bba5"};
+                      background:${matched ? "#f3dfb9" : "#f1ece3"};
+                      color:${matched ? "#6b3210" : "#887b6b"};
+                    ">
+                      ${name.toUpperCase()}
+                      ${matched ? "✓" : "×"}
+                    </span>
+                  `)
+                  .join("")}
+
+              </div>
+
+            </div>
+          `;
+
+        }).join("");
+
+    }
 
 
-          results.style.display =
-            'block';
+    /*
+     * 5. Scroll to results
+     */
 
-          status.textContent = '';
+    resultSection.scrollIntoView({
+      behavior: "smooth"
+    });
 
-        } catch (err) {
+  }
 
-          status.textContent = '';
+  catch (error) {
 
-          error.textContent =
-            err.message;
+    console.error(error);
 
-        }
-
-      }
+    alert(
+      "Could not calculate Panchang. Check whether your server is running."
     );
 
-  </script>
+  }
+
+  finally {
+
+    calculateBtn.textContent =
+      "❖  Calculate Panchang  ❖";
+
+    calculateBtn.disabled = false;
+
+  }
+
+});
+
+</script>
 
 </body>
 </html>
